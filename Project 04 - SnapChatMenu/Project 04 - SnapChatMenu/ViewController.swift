@@ -25,14 +25,14 @@ class ViewController: UIViewController {
     func addChildVC()  {
         let leftVC = LeftViewController()
         self.scrollView.addSubview(leftVC.view)
-        self.addChild(leftVC)
+        self.addChildViewController(leftVC)
         
         let centerVC = CenterViewController()
         var centerFrame = centerVC.view.frame
         centerFrame.origin.x = screenWidth
         centerVC.view.frame = centerFrame
         self.scrollView.addSubview(centerVC.view)
-        self.addChild(centerVC)
+        self.addChildViewController(centerVC)
         
         
         let rightVC = RightViewController()
@@ -40,7 +40,7 @@ class ViewController: UIViewController {
         rightFrame.origin.x = screenWidth*2
         rightVC.view.frame = rightFrame
         self.scrollView.addSubview(rightVC.view)
-        self.addChild(rightVC)
+        self.addChildViewController(rightVC)
     }
 
     

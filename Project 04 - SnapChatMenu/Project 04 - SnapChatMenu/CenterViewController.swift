@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 
 
-class CenterViewController: UIViewController & AVCapturePhotoCaptureDelegate{
+class CenterViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.session.startRunning()
@@ -45,14 +45,15 @@ class CenterViewController: UIViewController & AVCapturePhotoCaptureDelegate{
     
     
     @objc func takePhotoBtnClick() {
-        self.imageOutput.capturePhoto(with: outSettings, delegate: self)
-    }
-    
-    
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-        let jpeaData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer!, previewPhotoSampleBuffer: previewPhotoSampleBuffer)
-        let image = UIImage.init(data: jpeaData!)
-        print(image!)
+        let stillImageConnection = self.imageOutput.connection(with: .video)
+        
+        self.imageOutput.captureStillImageAsynchronously(from: stillImageConnection!) { (imageDataSampleBuffer, error) in
+            
+            let jpeaData = AVCaptureStillImageOutput .jpegStillImageNSDataRepresentation(imageDataSampleBuffer!)
+            let image = UIImage.init(data: jpeaData!)
+            print(image)
+            
+        }
     }
     
     lazy var session: AVCaptureSession = {
@@ -67,16 +68,11 @@ class CenterViewController: UIViewController & AVCapturePhotoCaptureDelegate{
         return videoInput
     }()
     
-    
-    lazy var imageOutput: AVCapturePhotoOutput = {
-        let imageOutput = AVCapturePhotoOutput()
-        imageOutput.photoSettingsForSceneMonitoring = outSettings;
+    lazy var imageOutput: AVCaptureStillImageOutput = {
+        let imageOutput = AVCaptureStillImageOutput()
+        let outSettings = [AVVideoCodecKey:AVVideoCodecJPEG]
+        imageOutput.outputSettings = outSettings
         return imageOutput
-    }()
-    
-    lazy var outSettings: AVCapturePhotoSettings = {
-        let outSettings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey : AVVideoCodecJPEG])
-        return outSettings
     }()
     
     
@@ -93,7 +89,6 @@ class CenterViewController: UIViewController & AVCapturePhotoCaptureDelegate{
         takePhotoBtn.frame = CGRect.init(x: (screenWidth-100)*0.5, y: screenHeight - 110, width: 100, height: 100)
         takePhotoBtn.imageView?.contentMode = .scaleAspectFill
         takePhotoBtn.addTarget(self, action: #selector(takePhotoBtnClick), for: .touchUpInside)
-        
         return takePhotoBtn
     }()
     

@@ -58,7 +58,7 @@ class ViewController: UIViewController {
     
     
     @objc func playerItemDidPlayToEndTime() {
-        self.player.seek(to: CMTime.zero)
+        self.player.seek(to: kCMTimeZero)
         self.player.play()
     }
     
@@ -76,7 +76,6 @@ class ViewController: UIViewController {
     //播放layer
     lazy var playerLayer: AVPlayerLayer = {
         let playerLayer = AVPlayerLayer(player: self.player)
-        playerLayer.videoGravity = .resizeAspectFill
         playerLayer.frame = self.view.bounds
         return playerLayer
     }()
